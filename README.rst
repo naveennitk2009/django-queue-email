@@ -15,36 +15,39 @@ Quick start
         'queue_email',
     )
 
-2. Add following to your settings.py
+2. Add following to your settings.py::
 
-    EMAIL_QUEUE ={
+    EMAIL_QUEUE = {
         'aws' : {
-            'region': <AWS_REGION>,
-            'key': <AWS_KEY>,
-            'secret': <AWS_SECRET>,
-            'queue': <SQS_EMAIL_QUEUE>,
+            'region': AWS_REGION,
+            'key': AWS_KEY,
+            'secret': AWS_SECRET,
+            'queue': SQS_EMAIL_QUEUE,
         },
-        'logger':{
-            'error': <Error Logger>,
-            'info' : <Info Logger>
+        'logger' : {
+            'error': Error_Logger,
+            'info' : Info_Logger
         }
     }
 
-    EMAIL_HOST = <EMAIL SMTP HOST>
-    EMAIL_PORT = <EMAIL SMTP PORT>
+    EMAIL_HOST = EMAIL_SMTP_HOST
+    EMAIL_PORT = EMAIL_SMTP_PORT
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = <EMAIL HOST USER>
-    EMAIL_HOST_PASSWORD = <EMAIL HOST PASSWORD>
-    DEFAULT_EMAIL_ID = <DEFAULT EMAIL ID to be used in case of DEBUG is true>
+    EMAIL_HOST_USER = EMAIL_HOST_USER
+    EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+    DEFAULT_EMAIL_ID = DEFAULT_EMAIL_ID to be used in case of DEBUG is true
 
-3. Add this to your settings file to enable equeue of emails and process of emails from queue
+3. Add this to your settings file to enable equeue of emails and process of emails from queue::
+
     ENABLE_EMAIL_QUEUE = False
 
 
-4. Import Email class
+4. Import Email class::
+
     from queue_email.email import Email
 
-5. Enqueue emails
+5. Enqueue emails::
+
     Email().enqueue_email(send_from, send_to, subject, body, cc=None, **extras)
 
     send_from : Email id of the sender <String>
@@ -54,7 +57,7 @@ Quick start
     cc : List of cc email ids [<String>]
     extras : Extras that can be sent. It can be used in case you are thinking of extending the functionality of the class method.
 
-6. Extending/Overriding methods that can be used -
+6. Extending/Overriding methods that can be used::
     In some cases you might want to extend or override the functionality of methods used in Email class.
     Following methods are available -
     a. enqueue_email(send_from, send_to, subject, body, cc=None, **extras)
