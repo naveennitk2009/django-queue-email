@@ -34,12 +34,12 @@ class Email(object):
 
     def enqueue_email(self ,send_from, send_to, subject, body, cc=None, **extras):
         try:
-            self._send_from = send_from
-            self._send_to = send_to
-            self._subject = subject
-            self._body = body
-            self._cc = cc
-            self._extras = extras
+            self.send_from = send_from
+            self.send_to = send_to
+            self.subject = subject
+            self.body = body
+            self.cc = cc
+            self.extras = extras
             self._enqueue_email()
         except Exception as e:
             raise e
@@ -47,11 +47,11 @@ class Email(object):
     def payload_builder(self, **kwargs):
         try:
             self._payload = {
-                "from": self._send_from,
-                "to": self._send_to,
-                "subject": self._subject,
-                "body": self._body,
-                "cc": [] if self._cc is None else self._cc
+                "from": self.send_from,
+                "to": self.send_to,
+                "subject": self.subject,
+                "body": self.body,
+                "cc": [] if self.cc is None else self.cc
             }
         except Exception as e:
             raise e
@@ -76,12 +76,12 @@ class Email(object):
             message = Message()
             message.set_body(json.dumps(self._payload))
             self._email_queue.write(message)
-            info_logger.info("Email queued to: " + self._send_to + " with subject: " + self._subject)
+            info_logger.info("Email queued to: " + self.send_to + " with subject: " + self.subject)
             self.post_enqueue_send()
         except Exception as e:
             self.on_enqueue_error()
             error_logger.error("", exc_info=True, extra={})
-            info_logger.info("Email skipped to: " + self._send_to + " with subject: " + self._subject)
+            info_logger.info("Email skipped to: " + self.send_to + " with subject: " + self.subject)
             raise  e
 
     def dequeue_email(self):
@@ -124,7 +124,7 @@ class Email(object):
                         }):
                             self.post_dequeue()
                             self._email_queue.delete_message(message)
-                            info_logger.info("Email sent to: " + self._send_to + " with subject: " + self._subject)
+                            info_logger.info("Email sent to: " + self.send_to + " with subject: " + self.subject)
                     except:
                         self.on_dequeue_error()
                         error_logger.error("", exc_info=True, extra={})
