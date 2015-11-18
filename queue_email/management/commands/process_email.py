@@ -2,7 +2,7 @@ __author__ = 'naveenkumar'
 import logging
 
 from django.core.management import BaseCommand
-from queue_email.email import Email
+from queue_email.email_producer_consumer import Email
 from django.conf import settings
 
 error_logger = logging.getLogger()
