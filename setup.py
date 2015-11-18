@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-queue-email',
-    version='0.6',
+    version='0.7',
     packages=['queue_email','queue_email.management', 'queue_email.management.commands'],
     include_package_data=True,
     description='Queue Email is a small app which lets any django project to send emails which are queued to AWS SQS. Queue Email also provides a command which can be run (eg. as a cron) to process those emails from the SQS queue.',

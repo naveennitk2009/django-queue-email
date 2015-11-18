@@ -24,12 +24,15 @@ except Exception as e:
 class Email(object):
 
     def _establish_aws_connection(self):
-        if settings.ENABLE_EMAIL_QUEUE:
-            sqs_conn = boto.sqs.connect_to_region(
-            settings.EMAIL_QUEUE['aws']['region'], aws_access_key_id=settings.EMAIL_QUEUE['aws']['key'], aws_secret_access_key=settings.EMAIL_QUEUE['aws']['secret'])
-            self._email_queue = sqs_conn.get_queue(settings.EMAIL_QUEUE['aws']['queue'])
-            if self._email_queue is None:
-                self._email_queue = sqs_conn.create_queue(settings.EMAIL_QUEUE['aws']['queue'])
+        try:
+            if settings.ENABLE_EMAIL_QUEUE:
+                sqs_conn = boto.sqs.connect_to_region(
+                settings.EMAIL_QUEUE['aws']['region'], aws_access_key_id=settings.EMAIL_QUEUE['aws']['key'], aws_secret_access_key=settings.EMAIL_QUEUE['aws']['secret'])
+                self._email_queue = sqs_conn.get_queue(settings.EMAIL_QUEUE['aws']['queue'])
+                if self._email_queue is None:
+                    self._email_queue = sqs_conn.create_queue(settings.EMAIL_QUEUE['aws']['queue'])
+        except Exception as e:
+            raise e
 
 
     def enqueue_email(self ,send_from, send_to, subject, body, cc=None, **extras):
