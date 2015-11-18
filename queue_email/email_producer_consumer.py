@@ -88,7 +88,10 @@ class Email(object):
             raise  e
 
     def dequeue_email(self):
-        self._dequeue_email()
+        try:
+            self._dequeue_email()
+        except Exception as e:
+            raise e
 
     def pre_dequeue(self, **kwargs):
         pass
@@ -103,7 +106,11 @@ class Email(object):
         if not settings.ENABLE_EMAIL_QUEUE:
             return
 
-        self._establish_aws_connection()
+        try:
+            self._establish_aws_connection()
+        except Exception as e:
+            raise e
+
         sleep_time = 0.05
         while 1 == 1:
             self.pre_dequeue()
@@ -118,7 +125,7 @@ class Email(object):
                         subject = message_body.get('subject')
                         body = message_body.get('body')
                         cc = message_body.get('cc')
-                        if self._process_email({
+                        if self._process_email(**{
                             "send_from" : from_email,
                             "send_to" : to_email,
                             "subject": subject,
@@ -127,7 +134,7 @@ class Email(object):
                         }):
                             self.post_dequeue()
                             self._email_queue.delete_message(message)
-                            info_logger.info("Email sent to: " + self.send_to + " with subject: " + self.subject)
+                            info_logger.info("Email sent to: " + to_email + " with subject: " + subject)
                     except:
                         self.on_dequeue_error()
                         error_logger.error("", exc_info=True, extra={})
