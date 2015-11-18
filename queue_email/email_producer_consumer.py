@@ -5,8 +5,8 @@ from boto.sqs.message import Message
 import logging
 import json
 from datetime import datetime
-from email_producer_consumer.mime.multipart import MIMEMultipart
-from email_producer_consumer.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from time import sleep
 import smtplib
 
