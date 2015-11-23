@@ -3,7 +3,7 @@ Queue Email
 =====
 
 Queue Email is a small app which lets any django project to send emails which are queued to AWS SQS.
-Queue Email also provides a command which can be run (eg. as a cron) to process those emails from the SQS queue.
+Queue Email also provides a command which can be run to process those emails from the SQS queue every 0.05s .
 
 Setup
 -----------
@@ -33,6 +33,9 @@ Quick start
             'key': AWS_KEY,
             'secret': AWS_SECRET,
             'queue': SQS_EMAIL_QUEUE,
+            'attachment_bucket' : EMAIL_ATTACHMENT_S3_BUCKET, #required if you are planning to send emails with attachments
+            's3-url-endpoint' : None #This is the endpoint after attachment files gets uploaded to s3. This is required for                                     #sqs to pick up and process while sending the mail
+                                    #This by default is "https://s3-" + settings.EMAIL_QUEUE['aws']['region'] + ".amazonaws                                     #.com/" + settings.EMAIL_QUEUE['aws']['attachment_bucket'] + '/'
         },
         'logger' : {
             'error': Error_Logger,
