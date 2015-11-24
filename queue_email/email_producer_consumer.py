@@ -174,13 +174,11 @@ class Email(object):
             msg['cc'] = [] if kwargs.get('cc') is None else kwargs.get('cc')
             msg.attach(MIMEText(kwargs.get('body'), 'html', 'utf-8'))
 
-            if self._s3_conn is None:
-                self._s3_conn = S3Connection(settings.EMAIL_QUEUE['aws']['key'], settings.EMAIL_QUEUE['aws']['secret'])
-            bucket = self._s3_conn.get_bucket(settings.EMAIL_QUEUE['aws']['attachment_bucket'])
-
-
             attachments = kwargs.get('attachments')
-            if attachments is not None:
+            if settings.EMAIL_QUEUE['aws'].get('attachment_bucket') is not None and attachments is not None:
+                if self._s3_conn is None:
+                    self._s3_conn = S3Connection(settings.EMAIL_QUEUE['aws']['key'], settings.EMAIL_QUEUE['aws']['secret'])
+                bucket = self._s3_conn.get_bucket(settings.EMAIL_QUEUE['aws']['attachment_bucket'])
                 for attachment in attachments:
                     url = attachment.get('url')
                     contenttype = attachment.get('type')
@@ -224,6 +222,9 @@ class Email(object):
 
     def _upload_attachments_to_s3(self):
         try:
+            if settings.EMAIL_QUEUE['aws'].get('attachment_bucket') is None:
+                error_logger.error("Attachments require attachment_bucket under settings. Skipping sending attachments")
+                return []
             if self._s3_conn is None:
                 self._s3_conn = S3Connection(settings.EMAIL_QUEUE['aws']['key'], settings.EMAIL_QUEUE['aws']['secret'])
             bucket = self._s3_conn.get_bucket(settings.EMAIL_QUEUE['aws']['attachment_bucket'])
@@ -233,10 +234,10 @@ class Email(object):
                 filename =  os.path.basename(urlparse.urlsplit(attachment.get('url')).path)
                 k.key = filename
                 k.set_contents_from_filename(attachment.get('url'))
-                if settings.EMAIL_QUEUE['aws']['s3-url-endpoint'] is None:
+                if settings.EMAIL_QUEUE['aws'].get('s3-url-endpoint') is None:
                     s3_url_endpoint = "https://s3-" + settings.EMAIL_QUEUE['aws']['region'] + ".amazonaws.com/" + settings.EMAIL_QUEUE['aws']['attachment_bucket'] + '/'
                 else:
-                    s3_url_endpoint = settings.EMAIL_QUEUE['aws']['s3-url-endpoint']
+                    s3_url_endpoint = settings.EMAIL_QUEUE['aws'].get('s3-url-endpoint')
                 s3_uploaded_url = s3_url_endpoint + filename
                 uploaded_attachment = copy.deepcopy(attachment)
                 uploaded_attachment['url'] = s3_uploaded_url
