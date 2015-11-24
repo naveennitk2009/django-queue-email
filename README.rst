@@ -34,8 +34,8 @@ Quick start
             'secret': AWS_SECRET,
             'queue': SQS_EMAIL_QUEUE,
             'attachment_bucket' : EMAIL_ATTACHMENT_S3_BUCKET, #required if you are planning to send emails with attachments
-            's3-url-endpoint' : None #This is the endpoint after attachment files gets uploaded to s3. This is required for                                     #sqs to pick up and process while sending the mail
-                                    #This by default is "https://s3-" + settings.EMAIL_QUEUE['aws']['region'] + ".amazonaws                                     #.com/" + settings.EMAIL_QUEUE['aws']['attachment_bucket'] + '/'
+            's3-url-endpoint' : None #This is the endpoint after attachment files gets uploaded to s3. This is required for sqs to pick up and process while sending the mail
+                                    #This by default is "https://s3-" + settings.EMAIL_QUEUE['aws']['region'] + ".amazonaws.com/" + settings.EMAIL_QUEUE['aws']['attachment_bucket'] + '/'
         },
         'logger' : {
             'error': Error_Logger,
@@ -60,13 +60,14 @@ Quick start
 
 5. Enqueue emails::
 
-    Email().enqueue_email(send_from, send_to, subject, body, cc=None, **extras)
+    Email().enqueue_email(send_from, send_to, subject, body, attachements, cc=None, **extras)
     
     send_from : Email id of the sender <String>
-    send_to : Email id of the receiver <String>
+    send_to : List of Email id of the receiver [<String>]
     subject : Subject of the email <String>
     body : Body of email <String>
     cc : List of cc email ids [<String>]
+    attachments: List of attachment dict [<Attachment Dict>] . <Attachment dict> is { 'url' : <Local absoulte path of the attachment>, 'type' : <Type of attachment like pdf, png, jpg, xls, doc, etc>}
     extras : Extras that can be sent. It can be used in case you are thinking of extending the functionality of the class method. <Dict>
 
 
